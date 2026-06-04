@@ -46,6 +46,18 @@ if (typeof document !== 'undefined' && !document.getElementById('kds-css')) {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+function parseModificaciones(str) {
+  if (!str) return null;
+  const parts = str.split(/,\s*/);
+  return parts
+    .map((part) => {
+      const idx = part.indexOf(':');
+      if (idx === -1) return { label: null, value: part.trim() };
+      return { label: part.slice(0, idx).trim(), value: part.slice(idx + 1).trim() };
+    })
+    .filter((p) => p.value);
+}
+
 function parseEntrega(notas) {
   if (!notas) return null;
   const m = notas.match(/entrega:\s*(\d{1,2}:\d{2})/i);
@@ -221,11 +233,20 @@ function PedidoCard({ pedido, prods, now, onPreparar, onListo, onVolver }) {
               <div style={{ fontSize: 16, fontWeight: 600, color: '#e2e8f0', lineHeight: 1.3 }}>
                 {p.nombre}
               </div>
-              {p.modificaciones && (
-                <div style={{ fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>
-                  {p.modificaciones}
+              {parseModificaciones(p.modificaciones)?.map((m, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 3 }}>
+                  <span style={{
+                    fontSize: 10, fontWeight: 800, color: '#0f172a',
+                    background: '#64748b', borderRadius: 3,
+                    padding: '1px 5px', flexShrink: 0, letterSpacing: '0.04em',
+                  }}>
+                    {m.label ?? i + 1}
+                  </span>
+                  <span style={{ fontSize: 14, color: '#cbd5e1', fontWeight: 500 }}>
+                    {m.value}
+                  </span>
                 </div>
-              )}
+              ))}
               {p.extras_pedido?.length > 0 && (
                 <div style={{ fontSize: 13, color: '#60a5fa' }}>
                   + {p.extras_pedido.map((e) => e.descripcion).join(' · ')}
