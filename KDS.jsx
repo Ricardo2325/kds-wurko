@@ -206,14 +206,14 @@ function PedidoCard({ pedido, prods, now, pantalla, onPreparar, onListo, onVolve
       {/* Top row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
         <div style={{ minWidth: 0 }}>
-          <div style={{ fontSize: 12, color: '#475569', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          <div style={{ fontSize: 22, fontWeight: 900, color: '#f1f5f9', lineHeight: 1, letterSpacing: '0.04em' }}>
             {shortId(pedido.id)}
           </div>
-          <div style={{ fontSize: 20, fontWeight: 700, color: '#f1f5f9', lineHeight: 1.2, marginTop: 2, wordBreak: 'break-word' }}>
+          <div style={{ fontSize: 16, fontWeight: 600, color: '#94a3b8', lineHeight: 1.2, marginTop: 4, wordBreak: 'break-word' }}>
             {pedido.empresa || 'Cliente'}
           </div>
           <div style={{ fontSize: 12, color: '#475569', marginTop: 3 }}>
-            {pedido.forma_pago ? `${pedido.forma_pago} · ` : ''}llegó {fmtHora(pedido.created_at)}
+            llegó {fmtHora(pedido.created_at)}
           </div>
         </div>
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
@@ -496,7 +496,11 @@ export default function KDS() {
   const handlePreparar = useCallback(async (pedidoId) => {
     const { error: err } = await supabase
       .from('pedidos').update({ estado: 'preparando' }).eq('id', pedidoId);
-    if (err) { setError('Error al actualizar estado'); return; }
+    if (err) {
+      console.error('handlePreparar error:', JSON.stringify(err));
+      setError(`Error: ${err.message || err.code || 'desconocido'}`);
+      return;
+    }
     await supabase.from('kds_tiempos').insert({
       pedido_id: pedidoId, pantalla, iniciado_at: new Date().toISOString(),
     });
