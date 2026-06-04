@@ -46,7 +46,9 @@ if (typeof document !== 'undefined' && !document.getElementById('kds-css')) {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function parseModificaciones(str) {
+const BARRA_MOD_LABELS = new Set(['bebida', 'bebidas', 'refresco', 'drink']);
+
+function parseModificaciones(str, pantalla) {
   if (!str) return null;
   const parts = str.split(/,\s*/);
   return parts
@@ -55,7 +57,11 @@ function parseModificaciones(str) {
       if (idx === -1) return { label: null, value: part.trim() };
       return { label: part.slice(0, idx).trim(), value: part.slice(idx + 1).trim() };
     })
-    .filter((p) => p.value);
+    .filter((p) => {
+      if (!p.value) return false;
+      if (pantalla === 'cocina' && p.label && BARRA_MOD_LABELS.has(p.label.toLowerCase())) return false;
+      return true;
+    });
 }
 
 function parseEntrega(notas) {
@@ -172,7 +178,7 @@ function HoldButton({ label, onComplete, duration = 3000, btnStyle }) {
 
 // ─── PedidoCard ───────────────────────────────────────────────────────────────
 
-function PedidoCard({ pedido, prods, now, onPreparar, onListo, onVolver }) {
+function PedidoCard({ pedido, prods, now, pantalla, onPreparar, onListo, onVolver }) {
   const urgencia = getUrgencia(pedido, now);
   const entrega  = parseEntrega(pedido.notas);
   const nota     = notasSinEntrega(pedido.notas);
@@ -233,7 +239,7 @@ function PedidoCard({ pedido, prods, now, onPreparar, onListo, onVolver }) {
               <div style={{ fontSize: 16, fontWeight: 600, color: '#e2e8f0', lineHeight: 1.3 }}>
                 {p.nombre}
               </div>
-              {parseModificaciones(p.modificaciones)?.map((m, i) => (
+              {parseModificaciones(p.modificaciones, pantalla)?.map((m, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 3 }}>
                   <span style={{
                     fontSize: 10, fontWeight: 800, color: '#0f172a',
@@ -673,6 +679,7 @@ export default function KDS() {
                     pedido={pedido}
                     prods={pedido._prods}
                     now={now}
+                    pantalla={pantalla}
                     onPreparar={handlePreparar}
                     onListo={handleListo}
                     onVolver={handleVolver}
@@ -704,6 +711,7 @@ export default function KDS() {
                       pedido={pedido}
                       prods={pedido._prods}
                       now={now}
+                      pantalla={pantalla}
                       onPreparar={handlePreparar}
                       onListo={handleListo}
                       onVolver={handleVolver}
