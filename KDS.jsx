@@ -40,7 +40,6 @@ if (typeof document !== 'undefined' && !document.getElementById('kds-css')) {
     .card-enter { animation: slide-in 0.22s ease-out; }
     .hold-btn { position: relative; overflow: hidden; user-select: none; -webkit-user-select: none; touch-action: none; }
     .hold-fill { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,255,255,0.18); pointer-events: none; }
-    @media (max-width: 1100px) { .kds-grid { grid-template-columns: 1fr !important; } }
   `;
   document.head.appendChild(s);
 }
@@ -202,7 +201,7 @@ function PedidoCard({ pedido, prods, now, pantalla, onPreparar, onListo, onVolve
       className={`card-enter${urgencia === 'urgente' ? ' card-urgent' : ''}`}
       style={{
         background: '#1e293b', borderRadius: 10, borderLeft: `5px solid ${borderColor}`,
-        padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 12,
+        padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: 18,
       }}
     >
       {/* Top row */}
@@ -231,7 +230,7 @@ function PedidoCard({ pedido, prods, now, pantalla, onPreparar, onListo, onVolve
       </div>
 
       {/* Products */}
-      <div style={{ borderTop: '1px solid #334155', paddingTop: 8, display: 'flex', flexDirection: 'column', gap: 5, flex: 1 }}>
+      <div style={{ borderTop: '1px solid #334155', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
         {prods.map((p) => (
           <div key={p.id} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
             <span style={{ fontSize: 20, fontWeight: 800, color: '#64748b', lineHeight: 1.4, minWidth: 32, flexShrink: 0 }}>
